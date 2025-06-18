@@ -6,7 +6,7 @@ const tasksStore: TaskEntity[] = [];
 
 export class InMemoryTaskRepository implements TaskRepository {
   async addTask(taskData: AddTaskData): Promise<TaskEntity> {
-    const newTask = new TaskEntity(nextId++, taskData.title, taskData.completed);
+    const newTask = new TaskEntity(nextId++, taskData.title, taskData.content || "", taskData.completed); // Added content
     tasksStore.push(newTask);
     return Promise.resolve(newTask);
   }
@@ -16,15 +16,15 @@ export class InMemoryTaskRepository implements TaskRepository {
     if (index > -1) {
       tasksStore.splice(index, 1);
     }
-    else { throw new Error("Task not found to remove"); }
+    // else { throw new Error("Task not found to remove"); } // Optional based on desired strictness
     return Promise.resolve();
   }
 
   async updateTask(updatedTask: TaskEntity): Promise<TaskEntity> {
     const index = tasksStore.findIndex(task => task.id === updatedTask.id);
     if (index > -1) {
-      tasksStore[index] = updatedTask;
-      return Promise.resolve(updatedTask);
+      tasksStore[index] = new TaskEntity(updatedTask.id, updatedTask.title, updatedTask.content, updatedTask.completed);
+      return Promise.resolve(tasksStore[index]);
     }
     throw new Error("Task not found for update");
   }

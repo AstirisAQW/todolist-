@@ -7,7 +7,7 @@ export class LocalStorageTaskRepository implements TaskRepository {
   private getTasksFromStorage(): TaskEntity[] {
     const tasksJson = localStorage.getItem(LOCAL_STORAGE_KEY);
     return tasksJson
-      ? JSON.parse(tasksJson).map((t: any) => new TaskEntity(t.id, t.title, t.completed))
+      ? JSON.parse(tasksJson).map((t: any) => new TaskEntity(t.id, t.title, t.content || "", t.completed)) // Added t.content
       : [];
   }
 
@@ -22,7 +22,7 @@ export class LocalStorageTaskRepository implements TaskRepository {
   async addTask(taskData: AddTaskData): Promise<TaskEntity> {
     const tasks = this.getTasksFromStorage();
     const newId = this.getNextId(tasks);
-    const newTask = new TaskEntity(newId, taskData.title, taskData.completed);
+    const newTask = new TaskEntity(newId, taskData.title, taskData.content || "", taskData.completed); // Pass content
     tasks.push(newTask);
     this.saveTasksToStorage(tasks);
     return Promise.resolve(newTask);
@@ -39,7 +39,8 @@ export class LocalStorageTaskRepository implements TaskRepository {
     let tasks = this.getTasksFromStorage();
     const index = tasks.findIndex(task => task.id === updatedTaskData.id);
     if (index > -1) {
-      tasks[index] = new TaskEntity(updatedTaskData.id, updatedTaskData.title, updatedTaskData.completed);
+      // Ensure new TaskEntity is created with all properties
+      tasks[index] = new TaskEntity(updatedTaskData.id, updatedTaskData.title, updatedTaskData.content, updatedTaskData.completed);
       this.saveTasksToStorage(tasks);
       return Promise.resolve(tasks[index]);
     }
