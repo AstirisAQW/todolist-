@@ -1,10 +1,11 @@
 export class TaskEntity {
-  id: number; // Or string, like UUID, if you prefer
+  id: number;
   title: string;
-  // You might add other properties like 'completed: boolean', 'description: string', etc.
+  completed: boolean; // Added for more complete ToDo functionality
 
-  constructor(id: number, title: string) {
+  constructor(id: number, title: string, completed: boolean = false) {
     this.id = id;
     this.title = title;
+    this.completed = completed;
   }
 }
