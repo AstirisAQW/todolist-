@@ -1,11 +1,13 @@
 export class TaskEntity {
   id: number;
   title: string;
-  completed: boolean; // Added for more complete ToDo functionality
+  content: string; // New field for task description/content
+  completed: boolean;
 
-  constructor(id: number, title: string, completed: boolean = false) {
+  constructor(id: number, title: string, content: string = "", completed: boolean = false) {
     this.id = id;
     this.title = title;
+    this.content = content; // Initialize content
     this.completed = completed;
   }
 }

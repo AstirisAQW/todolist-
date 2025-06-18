@@ -9,12 +9,12 @@ export class AddTaskUsecase {
   }
 
   async execute(taskData: AddTaskData): Promise<TaskEntity> {
-    if (!taskData.title || taskData.title.trim() === "") {
-        throw new Error("Task title cannot be empty.");
+    if (!taskData.title && !taskData.content) { // Allow task if at least title or content exists
+        throw new Error("Task must have a title or content.");
     }
-    // Other business logic, e.g., default completion status
     const dataToSave: AddTaskData = {
-        title: taskData.title,
+        title: taskData.title || "", // Ensure title is string
+        content: taskData.content || "", // Ensure content is string
         completed: taskData.completed !== undefined ? taskData.completed : false,
     };
     return this.taskRepository.addTask(dataToSave);
