@@ -1,10 +1,9 @@
-import { Task } from '../entities/Task';
+import { TaskEntity } from '../entities/TaskEntity';
 
-export interface ITaskRepository {
-    addTask(taskData: Omit<Task, 'id' | 'completed'>): Promise<Task>;
-    removeTask(id: string): Promise<void>;
-    updateTask(id: string, updates: Partial<Omit<Task, 'id'>>): Promise<Task | null>;
-    getAllTasks(): Promise<Task[]>;
-    getTask(id: string): Promise<Task | null>;
-    toggleTaskCompletion(id: string): Promise<Task | null>;
+export interface TaskRepository {
+  addTask(task: Omit<TaskEntity, 'id'>): Promise<TaskEntity>; // Input might not have ID yet
+  removeTask(id: number): Promise<void>;
+  updateTask(task: TaskEntity): Promise<TaskEntity>;
+  getAllTasks(): Promise<TaskEntity[]>;
+  getTask(id: number): Promise<TaskEntity | null>;
 }
