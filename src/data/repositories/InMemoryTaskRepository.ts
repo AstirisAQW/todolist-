@@ -1,40 +1,40 @@
 import { TaskEntity } from '../../domain/entities/TaskEntity';
-import type { TaskRepository } from '../../domain/repositories/TaskRepository';
+import type { TaskRepository, AddTaskData } from '../../domain/repositories/TaskRepository';
 
 let nextId = 1;
-const tasks: TaskEntity[] = [];
+const tasksStore: TaskEntity[] = [];
 
 export class InMemoryTaskRepository implements TaskRepository {
-  async addTask(taskData: Omit<TaskEntity, 'id'>): Promise<TaskEntity> {
-    const newTask = new TaskEntity(nextId++, taskData.title);
-    // Add other properties if your entity has them
-    tasks.push(newTask);
-    return newTask;
+  async addTask(taskData: AddTaskData): Promise<TaskEntity> {
+    const newTask = new TaskEntity(nextId++, taskData.title, taskData.completed);
+    tasksStore.push(newTask);
+    return Promise.resolve(newTask);
   }
 
   async removeTask(id: number): Promise<void> {
-    const index = tasks.findIndex(task => task.id === id);
+    const index = tasksStore.findIndex(task => task.id === id);
     if (index > -1) {
-      tasks.splice(index, 1);
+      tasksStore.splice(index, 1);
     }
-    // else throw new Error("Task not found"); // Optional error handling
+    else { throw new Error("Task not found to remove"); }
+    return Promise.resolve();
   }
 
   async updateTask(updatedTask: TaskEntity): Promise<TaskEntity> {
-    const index = tasks.findIndex(task => task.id === updatedTask.id);
+    const index = tasksStore.findIndex(task => task.id === updatedTask.id);
     if (index > -1) {
-      tasks[index] = updatedTask;
-      return updatedTask;
+      tasksStore[index] = updatedTask;
+      return Promise.resolve(updatedTask);
     }
     throw new Error("Task not found for update");
   }
 
   async getAllTasks(): Promise<TaskEntity[]> {
-    return [...tasks]; // Return a copy
+    return Promise.resolve([...tasksStore]); // Return a copy
   }
 
   async getTask(id: number): Promise<TaskEntity | null> {
-    const task = tasks.find(task => task.id === id);
-    return task || null;
+    const task = tasksStore.find(task => task.id === id);
+    return Promise.resolve(task || null);
   }
 }
